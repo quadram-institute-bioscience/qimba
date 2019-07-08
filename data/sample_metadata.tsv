@@ -1,0 +1,6 @@
+#SampleID	BarcodeSequence	LinkerPrimerSequence	Source	Year	Month	Day	Subject	ReportedAntibioticUsage	DaysSinceExperimentStart	Description
+#q2:types	categorical	categorical	categorical	numeric	numeric	numeric	categorical	categorical	numeric	categorical
+Human	AGCTGACTAGTC	GTGCCAGCMGCCGCGGTAA	gut	2008	10	28	subject-1	Yes	0	subject-1.gut.2008-10-28
+Mock	ACACACTATGGC	GTGCCAGCMGCCGCGGTAA	gut	2009	1	20	subject-1	No	84	subject-1.gut.2009-1-20
+Mouse	ACTACGTGTGGT	GTGCCAGCMGCCGCGGTAA	gut	2009	2	17	subject-1	No	112	subject-1.gut.2009-2-17
+Soil	AGTGCGATGCGT	GTGCCAGCMGCCGCGGTAA	gut	2009	3	17	subject-1	No	140	subject-1.gut.2009-3-17
