@@ -118,7 +118,7 @@ sub run {
         say Dumper $run;
         confess "No command provided";
     }
-    if ( $run->{title} ) {
+    if ( $run->{title} and not $run->{silent}) {
         $self->ver($run->{title}, "Shell");
     }
 
@@ -135,7 +135,7 @@ sub run {
     #my $cmd_output = `$run->{cmd}`;
     my $timeout = 60 * 60 * 48;
     my ($exit_code, $stdout, $stderr, $allout) = runexternal($run->{cmd}, q{}, $timeout, $self->{run_opt});
-    print STDERR ' ' x 60, "\r" if (defined $self->{run_opt} or defined $self->{debug});
+    print STDERR ' ' x 60, "\r" if ( (defined $self->{run_opt} or defined $self->{debug}) and  not $run->{silent});
     my $elapsed_time = tv_interval ( $start_time, [gettimeofday]);
     $run->{elapsed} = $elapsed_time;
 
@@ -156,8 +156,10 @@ sub run {
     if ($run->{exitcode} != 0 and $run->{canfail} != 1) {
         confess "Execution failed ($run->{msg}):\n[", $run->{cmd}, "]\n";
     }
-    $self->deb($run->{cmd}, '[cmd]');
-    $self->deb('Finished in '. _fsec($run->{elapsed}) . "; returned $run->{msg}", '[end]');
+    if ( not $run->{silent} ) {
+      $self->deb($run->{cmd}, 'Command:');
+      $self->deb('Finished in '. _fsec($run->{elapsed}) . "; returned $run->{msg}", 'Finished:');
+    }
     return $run;
 }
 
@@ -211,6 +213,7 @@ sub getFileFromZip {
     my ($self, $file, $path) = @_;
     my $out = run($self, {
             cmd => qq(unzip -f "$file" "$path"),
+            silent => 1,
         });
     return $out;
 }
