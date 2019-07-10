@@ -1,0 +1,1 @@
+{"pathname":"M/MI/MIKKOI/IPC-RunExternal-0.101.tar.gz","target":"IPC::RunExternal","provides":{"IPC::RunExternal":{"version":"0.101","file":"lib/IPC/RunExternal.pm"}},"version":"0.101","dist":"IPC-RunExternal-0.101","name":"IPC::RunExternal"}

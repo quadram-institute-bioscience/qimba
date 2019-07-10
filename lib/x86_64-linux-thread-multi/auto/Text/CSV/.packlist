@@ -1,0 +1,4 @@
+/opt/conda/envs/qiime2-2019.4/lib/site_perl/5.26.2/Text/CSV.pm relocate_as=../../../../Text/CSV.pm
+/opt/conda/envs/qiime2-2019.4/lib/site_perl/5.26.2/Text/CSV_PP.pm relocate_as=../../../../Text/CSV_PP.pm
+/opt/conda/envs/qiime2-2019.4/man/man3/Text::CSV.3 relocate_as=../../../../../../../man/man3/Text::CSV.3
+/opt/conda/envs/qiime2-2019.4/man/man3/Text::CSV_PP.3 relocate_as=../../../../../../../man/man3/Text::CSV_PP.3
