@@ -1,0 +1,1 @@
+{"target":"Text::CSV","pathname":"I/IS/ISHIGAKI/Text-CSV-2.00.tar.gz","dist":"Text-CSV-2.00","version":"2.00","provides":{"Text::CSV_PP":{"file":"lib/Text/CSV_PP.pm","version":"2.00"},"Text::CSV":{"version":"2.00","file":"lib/Text/CSV.pm"},"Text::CSV::ErrorDiag":{"file":"lib/Text/CSV_PP.pm","version":"2.00"}},"name":"Text::CSV"}
