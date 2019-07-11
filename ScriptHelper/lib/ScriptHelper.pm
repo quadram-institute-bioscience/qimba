@@ -257,7 +257,7 @@ sub checkDependencies {
             if ($check->{output} !~/${$dep_ref}{$key}->{check}/) {
               ${ $dep_ref }{$key}->{missing} = 1;
               if (defined ${$dep_ref}{$key}->{required} and ${$dep_ref}{$key}->{required} == 1) {
-                confess "MISSING DEPENDENCY $key\n${$dep_ref}{$key}->{message}\n";
+                confess "MISSING DEPENDENCY $key\n${$dep_ref}{$key}->{message}\n[Output: $check->{output} /$$dep_ref{$key}->{check}/]\n";
               } else {
                 $self->ver("Dependency $key not found: ${$dep_ref}{$key}->{message}");
               }
