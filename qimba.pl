@@ -6,6 +6,8 @@ use Getopt::Long;
 use File::Spec;
 use File::Spec::Functions;
 use File::Copy;
+use File::Find;
+use File::Basename;
 use FindBin qw($RealBin);
 use lib "$RealBin/ScriptHelper/lib/";
 use ScriptHelper;
@@ -26,7 +28,7 @@ my $q2db           = catfile("$dbdir", 'gg-13-8-99-515-806-nb-classifier.qza');
 my $db_rdp         = catfile("$dbdir", 'rdp_16s_v16.fa');
 
 my $opt_output_dir = catdir('Qimba');
-my $opt_logfile    = catfile("${opt_output_dir}", 'qimba.log');
+my $opt_logfile;
 my $opt_fortag     = '_R1';
 my $opt_revtag     = '_R2';
 
@@ -38,21 +40,24 @@ my $dependencies = {
 		test    => '{binary}',
 		check   => 'usearch v10',
 		message => 'Please, place USEARCH v10 binary named "usearch_10" in your path '.
-				   'or in the "/tools" subdirectory of this script',
+						   'or in the "/tools" subdirectory of this script',
+
 	},
 	'qiime' => {
 		binary  => 'qiime',
 		test    => '{binary} --version',
 		check   => 'q2cli version 2019.4',
 		message => 'qiime 2 2019.4 is needed (different version can introduce unexpected errors). '.
-				   'Activate the environment if installed via conda',
+				   			'Activate the environment if installed via conda',
+		required=> 1,
 	},
 	'vsearch' => {
 		binary  => 'vsearch',
-		test    => '{binary} --version   |grep "^vsearch"',
+		test    => '{binary} --version',
 		check   => 'vsearch v2.7',
 		message => 'VSEARCH 2.7 is required. Installation via Miniconda is recommended, '.
-				   'alternatively place the binary in the "/tools" subdirectory of this script',
+				   			'alternatively place the binary in the "/tools" subdirectory of this script',
+	  required=> 1,
 	}
 };
 
@@ -68,9 +73,13 @@ my (
 	$opt_skip_qiime,
 	$opt_skip_otu,
 	$opt_very_short_qiime,
+	$opt_autorun,
+	$opt_nodocker,
 );
 
 my $GetOptions = GetOptions(
+	'run|docker'           => \$opt_autorun,
+	'noauto'               => \$opt_nodocker,
 	'i|input-dir=s'        => \$opt_input_dir,
 	'm|metadata|mapping=s' => \$opt_metadata,
 	'min-depth=i'          => \$opt_min_depth,
@@ -89,12 +98,18 @@ my $GetOptions = GetOptions(
 	'demoqiime'            => \$opt_very_short_qiime,
 );
 
+if ($opt_autorun and not $opt_nodocker){
+	$opt_force = 1;
+	($opt_input_dir, $opt_metadata, $opt_output_dir) = dockerPaths();
+}
 # No color
 $opt_nocolor = 1     if ($ENV{'NO_COLOR'});
 $ENV{'NO_COLOR'} = 1 if ($opt_nocolor);
 
 my $json = JSON::PP->new->ascii->pretty->allow_nonref;
+$opt_logfile = catfile("${opt_output_dir}", 'qimba.log');
 usage(1) if (not defined $opt_input_dir or not defined $opt_metadata);
+
 
 my $s = ScriptHelper->new({
 	verbose => $opt_verbose,
@@ -109,6 +124,7 @@ my $otu_dir = catdir("$opt_output_dir", 'otu');
 my $otu_sample_dir = catdir("$otu_dir", 'samples');
 my $report_dir = catdir("$opt_output_dir", 'reports');
 my $tools = $s->checkDependencies($dependencies);
+
 my $QIMBA = QimbaHelper->new({
 	debug      => $opt_debug,
 	fortag     => $opt_fortag,
@@ -134,6 +150,10 @@ $s->deb("Read paths: " . $QIMBA->{reads_num} . " files found");
 $s->deb("Read paths: " . $QIMBA->{unexpected_files} . " unexpected files found");
 $s->ver($QIMBA->sampleCounts(), 'Read counts');
 
+if ($tools->{u10}->{missing}) {
+	$opt_skip_otu = 1;
+	$s->ver("Skipping USEARCH: dependency not satisfied");
+}
 # Process single samples
 # ========================
 
@@ -387,7 +407,7 @@ sub usage {
             Output directory. Default: [$opt_output_dir]
 
    --help
-	          Display full help page 
+	          Display full help page
 
  -----------------------------------------------------------------------
 
@@ -397,6 +417,37 @@ END
 }
 
 
+sub dockerPaths {
+	my $outdir = '/output/';
+	my $data_dir = '/data/';
+	my $input_dir;
+	my $metadata_file;
+
+		my @metadata;
+		my %fastq_dir;
+		my $finder = sub  {
+			if ($File::Find::name=~/(metadata|mapping).*\.(txt|tsv|csv)$/) {
+			  push(@metadata, $File::Find::name);
+			} elsif  ($File::Find::name=~/\.fastq(\.gz)?$/) {
+			  $fastq_dir{ dirname($File::Find::name) }++;
+			}
+		};
+
+		find(\&{$finder}, "$data_dir");
+		$metadata_file = $metadata[0] if (scalar @metadata == 1);
+		my @dirs = keys %fastq_dir;
+		$input_dir = @dirs[0] if (scalar @dirs == 1);
+		if (-d "$outdir" and defined $input_dir and defined $metadata_file) {
+			return($input_dir, $metadata_file, $outdir)
+		} else {
+			say STDERR "QIMBA - DOCKER AUTORUN",
+			'Usage: docker run -v $outputdir:/output -v $datadir:/data ...',
+			"Docker paths not found:",
+			"Output [$outdir] is required, and data dir [$data_dir] should contain a single metadata file",
+			"(e.g. metadata.tsv) and a directory with FASTQ files. Use --nodocker to avoid autorun";
+			exit;
+		}
+}
 
 
 

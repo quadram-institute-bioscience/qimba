@@ -57,20 +57,23 @@ sub new {
     };
     my $object = bless $self, $class;
 
-    # Check output directory
 
+    # Check output directory
     if (-d "$object->{outdir}") {
         if (not $self->{force}) {
             confess "Output directory found: this is not allowed at the moment [$object->{outdir}]";
         } else {
             $self->deb("Removing directory [--force]: $self->{outdir}");
             #$self->run({ cmd => qq(rm -rf "$self->{outdir}")});
-            `rm -rf "$self->{outdir}"`;
+            `rm -rf "$self->{outdir}/"*`;
             confess "Unable to remove $self->{outdir}\n" if ($?);
         }
+    } else {
+      $self->deb("Creating output directory: $self->{outdir}");
+      mkdir($object->{outdir}) or confess "Unable to create output directory $object->{outdir}";
     }
-    $self->deb("Creating output directory: $self->{outdir}");
-    mkdir($object->{outdir}) or confess "Unable to create output directory $object->{outdir}";
+
+
 
     my %parameter_tags = ();
     if (defined $object->{debug}) {
@@ -236,20 +239,31 @@ sub checkDependencies {
             'canfail'    => 1,
             'nocache'     => 1,
         });
-        die if not defined $check;
-        if ($check->{exitcode} > 0) {
+
+        if ($check->{output} !~/${$dep_ref}{$key}->{check}/) {
             print STDERR color('red'), "Warning: ", color('reset'), ${ $dep_ref }{$key}->{binary}, ' not found in $PATH, trying local binary', "\n" if ($self->{debug});
             ${ $dep_ref }{$key}->{binary} = "$self->{script_dir}/bin/" . ${ $dep_ref }{$key}->{binary};
 
             my $test_cmd = qq(${ $dep_ref }{$key}->{"test"});
             $test_cmd =~s/{binary}/${ $dep_ref }{$key}->{binary}/g;
             my $cmd = qq($test_cmd 2>&1 | grep "${ $dep_ref }{$key}->{"check"}");
-            run($self, {
+            my $out = run($self, {
                         'cmd' => $cmd,
                         'title' => qq(Checking local dependency: <${ $dep_ref }{$key}->{"binary"}>),
                         'canfail'    => 0,
                         'nocache'     => 1,
                     });
+
+            if ($check->{output} !~/${$dep_ref}{$key}->{check}/) {
+              ${ $dep_ref }{$key}->{missing} = 1;
+              if (defined ${$dep_ref}{$key}->{required} and ${$dep_ref}{$key}->{required} == 1) {
+                confess "MISSING DEPENDENCY $key\n${$dep_ref}{$key}->{message}\n";
+              } else {
+                $self->ver("Dependency $key not found: ${$dep_ref}{$key}->{message}");
+              }
+            }
+        } else {
+          # Global path
         }
 
 
