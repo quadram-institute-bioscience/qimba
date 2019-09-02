@@ -10,10 +10,10 @@ A pipeline to analyze 16S using Qiime 2 (2019.4) and USEARCH/VSEARCH.
 
 Perl modules:
   * IPC::RunExternal
-	* FASTX::Reader
-	* File::Spec::Functions
-	* Archive::Zip
-	* Archive::Zip::MemberRead
+  * FASTX::Reader
+  * File::Spec::Functions
+  * Archive::Zip
+  * Archive::Zip::MemberRead
   * ScriptHelper and QimbaHelper are provided with this repository
 
 
