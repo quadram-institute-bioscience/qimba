@@ -1,4 +1,0 @@
-/opt/conda/envs/qiime2-2019.4/bin/n50.pl relocate_as=../../../../../../../bin/n50.pl
-/opt/conda/envs/qiime2-2019.4/lib/site_perl/5.26.2/Proch/N50.pm relocate_as=../../../../Proch/N50.pm
-/opt/conda/envs/qiime2-2019.4/man/man1/n50.pl.1 relocate_as=../../../../../../../man/man1/n50.pl.1
-/opt/conda/envs/qiime2-2019.4/man/man3/Proch::N50.3 relocate_as=../../../../../../../man/man3/Proch::N50.3

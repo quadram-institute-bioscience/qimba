@@ -1,3 +1,0 @@
-/opt/conda/envs/qiime2-2019.4/lib/site_perl/5.26.2/x86_64-linux-thread-multi/Compress/Raw/Bzip2.pm relocate_as=../../../../Compress/Raw/Bzip2.pm
-/opt/conda/envs/qiime2-2019.4/lib/site_perl/5.26.2/x86_64-linux-thread-multi/auto/Compress/Raw/Bzip2/Bzip2.so relocate_as=Bzip2.so
-/opt/conda/envs/qiime2-2019.4/man/man3/Compress::Raw::Bzip2.3 relocate_as=../../../../../../../../man/man3/Compress::Raw::Bzip2.3

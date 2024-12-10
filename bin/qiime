@@ -1,5 +1,0 @@
-#!/bin/bash
-IMG_FILE=core-2019.4.simg
-DIR=`dirname $(readlink -f $0)`
-IMG="$DIR/$IMG_FILE"
-singularity exec $IMG $(basename "$0") $@
