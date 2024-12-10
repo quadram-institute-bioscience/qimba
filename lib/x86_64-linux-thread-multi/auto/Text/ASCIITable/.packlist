@@ -1,4 +1,0 @@
-/opt/conda/envs/qiime2-2019.4/lib/site_perl/5.26.2/Text/ASCIITable.pm relocate_as=../../../../Text/ASCIITable.pm
-/opt/conda/envs/qiime2-2019.4/lib/site_perl/5.26.2/Text/ASCIITable/Wrap.pm relocate_as=../../../../Text/ASCIITable/Wrap.pm
-/opt/conda/envs/qiime2-2019.4/man/man3/Text::ASCIITable.3 relocate_as=../../../../../../../man/man3/Text::ASCIITable.3
-/opt/conda/envs/qiime2-2019.4/man/man3/Text::ASCIITable::Wrap.3 relocate_as=../../../../../../../man/man3/Text::ASCIITable::Wrap.3
