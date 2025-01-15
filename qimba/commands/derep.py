@@ -5,7 +5,45 @@ import sys
 import subprocess
 from ..core import Job
 
-@click.command()
+class ThreadOption(click.Option):
+    def get_help_record(self, ctx):
+        """Customize the help text to include the config default."""
+        if ctx.obj is None or 'config' not in ctx.obj:
+            help_text = 'Number of threads (overrides config value)'
+        else:
+            config = ctx.obj['config']
+            default = config.get('qimba', 'threads', fallback='1')
+            help_text = f'Number of threads [default from config: {default}]'
+            
+        self.help = help_text
+        return super().get_help_record(ctx)
+
+class GroupedCommand(click.Command):
+    def format_options(self, ctx, formatter):
+        """Writes all the options into the formatter if they exist."""
+        opts = []
+        for param in self.get_params(ctx):
+            rv = param.get_help_record(ctx)
+            if rv is not None:
+                opts.append(rv)
+
+        if opts:
+            # Split options into groups
+            main_opts = [(x,y) for x,y in opts if x.startswith('-i') or x.startswith('-o')]
+            runtime_opts = [(x,y) for x,y in opts if x.startswith('--threads') or x.startswith('--verbose')]
+            other_opts = [(x,y) for x,y in opts if (x,y) not in main_opts and (x,y) not in runtime_opts]
+
+            if main_opts:
+                with formatter.section('Main Arguments'):
+                    formatter.write_dl(main_opts)
+            if runtime_opts:
+                with formatter.section('Runtime Options'):
+                    formatter.write_dl(runtime_opts)
+            if other_opts:
+                with formatter.section('Other Options'):
+                    formatter.write_dl(other_opts)
+
+@click.command(cls=GroupedCommand)
 @click.option('-i', '--input-fasta', required=True,
               type=click.Path(exists=True, dir_okay=False),
               help='Input FASTA file to dereplicate')
@@ -13,14 +51,19 @@ from ..core import Job
               type=click.Path(dir_okay=False),
               help='Output FASTA file with unique sequences')
 @click.option('--threads', type=int,
+              cls=ThreadOption,
               help='Number of threads (overrides config value)')
 @click.option('--verbose', is_flag=True,
               help='Enable verbose output')
 def cli(input_fasta, output, threads, verbose):
     """Dereplicate FASTA sequences using USEARCH.
     
+    \b
     This command identifies and collapses identical sequences, keeping track
     of their abundance in the sequence headers.
+    
+    Example usage:
+      qimba derep -i input.fasta -o unique.fasta --threads 8
     """
     # Get configuration
     ctx = click.get_current_context()
