@@ -1,5 +1,5 @@
 # Quadram Institute MetaBarcoding Analysis
 
-![Qimba Logo](./incl/qimba.svg)
+![Qimba Logo](./assets/qimba.svg)
 
 A toolkit to support Metabarcoding Analysis
