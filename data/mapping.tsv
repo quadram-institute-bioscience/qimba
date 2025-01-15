@@ -1,0 +1,4 @@
+Sample ID	Forward	Reverse	Treatment	Replicate
+SAMPLE1	/path/to/s1_R1.fastq	/path/to/s1_R2.fastq	A	1
+SAMPLE2	/path/to/s2_R1.fastq	/path/to/s2_R2.fastq	B	1
+SAMPLE3	/path/to/s3_R1.fastq	/path/to/s3_R2.fastq	A	2
