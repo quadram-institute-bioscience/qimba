@@ -5,7 +5,7 @@ import subprocess
 import shlex
 import sys
 from datetime import datetime
-
+import tempfile
 class Job:
     """
     Represents a system command to be executed with input/output validation and logging.
@@ -267,3 +267,45 @@ class Mapping:
     def __contains__(self, sample_id: str) -> bool:
         """Check if a sample exists."""
         return sample_id in self.samples
+
+def make_temp_dir(parent_dir='/my/temps', prefix='qimba_') -> Path:
+    """Create a temporary directory in the specified parent directory."""
+    parent = Path(parent_dir)
+    parent.mkdir(parents=True, exist_ok=True)
+    return Path(tempfile.mkdtemp(prefix=prefix, dir=parent))
+
+import re
+
+def extract_from_log(filepath: str, pattern: str) -> list:
+    """
+    Extract data from a log file using a regex pattern.
+    
+    Args:
+        filepath (str): Path to the log file
+        pattern (str): Regular expression pattern with capture groups
+        
+    Returns:
+        list: List of matched groups or empty list if no match found
+    """
+    try:
+        with open(filepath, 'r') as file:
+            content = file.read()
+            match = re.search(pattern, content)
+            if match:
+                # Convert matched groups to appropriate types (float or int)
+                return [float(group) if '.' in group else int(group) 
+                        for group in match.groups()]
+            return []
+    except FileNotFoundError:
+        print(f"Error: File {filepath} not found")
+        return []
+    except Exception as e:
+        print(f"Error processing file: {str(e)}")
+        return []
+
+# Example usage:
+# pattern = r"Merged \((\d+), ([.\d]+)%\)"
+# results = extract_from_log("path/to/your/logfile.txt", pattern)
+# if results:
+#     count, percentage = results
+#     print(f"Merged: {count} ({percentage}%)")

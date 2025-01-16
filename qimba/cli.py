@@ -12,12 +12,20 @@ COMMAND_GROUPS = {
     'sample': {
         'name': 'Sample Management',
 #        'description': 'Commands for handling sample information and mapping files',
-        'commands': ['make-mapping', 'show-samples']
+        'commands': ['make-mapping',
+                      'show-samples']
     },
     'sequence': {
         'name': 'Sequence Processing',
 #        'description': 'Commands for processing sequence data',
-        'commands': ['derep']
+        'commands': [
+            'merge',
+            'derep']
+    },
+    'formats': {
+        'name': 'Format conversions and manipulation',
+#        'description': 'Commands for processing sequence data',
+        'commands': ['dada2-split']
     },
     'file': {
         'name': 'File Operations',
