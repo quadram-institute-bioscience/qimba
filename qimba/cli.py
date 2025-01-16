@@ -11,22 +11,22 @@ from .config import load_config
 COMMAND_GROUPS = {
     'sample': {
         'name': 'Sample Management',
-        'description': 'Commands for handling sample information and mapping files',
+#        'description': 'Commands for handling sample information and mapping files',
         'commands': ['make-mapping', 'show-samples']
     },
     'sequence': {
         'name': 'Sequence Processing',
-        'description': 'Commands for processing sequence data',
+#        'description': 'Commands for processing sequence data',
         'commands': ['derep']
     },
     'file': {
         'name': 'File Operations',
-        'description': 'Commands for handling files and formats',
+#        'description': 'Commands for handling files and formats',
         'commands': ['check-tab']
     },
     'util': {
         'name': 'Utility Commands',
-        'description': 'General utility commands',
+#        'description': 'General utility commands',
         'commands': ['version']
     }
 }
