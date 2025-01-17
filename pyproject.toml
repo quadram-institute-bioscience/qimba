@@ -10,8 +10,9 @@ requires-python = ">=3.9"
 dependencies = [
     "click>=8.0",
     "configparser",
-    "pyfastx>=2.0.2",
-    "numpy>=1.20"
+    "dnaio>=1.2",
+    "numpy>=1.20",
+    "pandas>=2.0"
 ]
 
 [project.optional-dependencies]
