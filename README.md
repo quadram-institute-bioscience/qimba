@@ -2,50 +2,78 @@
 
 ![Qimba Logo](./assets/qimba-header.svg)
 
-A toolkit to support Metabarcoding Analysis
+A modular bioinformatics toolkit designed to facilitate metabarcoding analyses, with a focus on amplicon processing and sequence data management.
 
-Qimba comes with a set of subcommands, that you can list running `qimba`:
+## Introduction
 
-```text
-Usage: qimba [OPTIONS] COMMAND [ARGS]...
+Qimba provides a collection of commands for handling common tasks in metabarcoding workflows, including:
 
-  Qimba - Bioinformatics Toolkit
+- Sequence processing and quality control
+- Format conversions
 
-  A modular toolkit for bioinformatics analysis with focus on amplicon
-  processing.
 
-Options:
-  --config PATH  Path to config file
-  --help         Show this message and exit.
+## Qimba CLI
 
-Sample Management:
-  make-mapping  Generate a sample mapping file from a...
-  show-samples  Display sample information from a mapping...
+Commands are organized into functional groups (run `qimba --help` to list them all):
 
-Sequence Processing:
-  derep  Dereplicate FASTA sequences using USEARCH.
+### Sample Management
+- `make-mapping`: Generate sample sheets from sequence files
+- `show-samples`: Display sample information from mapping files
 
-Format conversions and manipulation:
-  dada2-split  Split DADA2 TSV file into FASTA and...
+### Sequence Processing
+- `merge`: Merge paired-end reads
+- `derep`: Dereplicate sequences while preserving abundance information
 
-File Operations:
-  check-tab  Check TSV files for their dimensions and...
+### Format Conversions
+- `dada2-split`: Convert DADA2 output format to FASTA and simplified TSV
 
-Utility Commands:
-  version  Print the version of Qimba.
+### File Operations
+- `check-tab`: Validate TSV file structure
+
+### Utility Commands
+- `version`: Display Qimba version information
+
+Example usage:
+```bash
+# Create a sample sheet from a directory of fastq files
+qimba make-mapping data_dir -o mapping.tsv
+
+# Merge paired-end reads
+qimba merge -i mapping.tsv -o merged.fastq --threads 8
+
+# Dereplicate sequences
+qimba derep -i merged.fasta -o unique.fasta
 ```
 
-## Configuration file
+## Configuration
 
-Some defaults can be set in your `~/.config/qimba.ini` file:
+Qimba uses a configuration file located at `~/.config/qimba.ini`. Default settings:
 
-
-Example configuration:
 ```ini
 [qimba]
 default_output_dir = .
 threads = 4
-
-[subcommand name]
-database = /path/to/database
 ```
+
+Override configuration using command-line options or by specifying a custom config file:
+```bash
+qimba --config my_config.ini [command]
+```
+
+## Contributing
+
+We welcome contributions! Please check our **[Developer Documentation](https://github.com/quadram-institute-bioscience/qimba/wiki)** for information about:
+- Code structure
+- Adding new commands
+- Testing guidelines
+- Best practices
+
+See [https://www.contributor-covenant.org/](Contributor covenant)
+
+## Authors
+
+Qimba is developed and maintained by [Quadram Institute Bioscience - Core Bioinformatics](https://quadram-institute-bioscience.github.io/).
+
+## License
+
+MIT
